@@ -48,9 +48,7 @@
 - Note: try to get insights from a field expert for these steps.
 
 1. Create a copy of the data for exploration (sampling it down to a manageable size if necessary).
-
 2. Create a Jupyter notebook to keep a record of your data exploration.
-
 3. Study each attribute and its characteristics:
 
    - Name
@@ -66,17 +64,102 @@
    - Type of distribution (Gaussian, uniform, logarithmic, etc.)
 
 4. For supervised learning tasks, identify the target attribute(s).
-   
 5. Visualize the data.
-
 6. Study the correlations between attributes.
-
 7. Study how you would solve the problem manually.
-
 8. Identify the promising transformations you may want to apply.
-
 9.  Identify extra data that would be useful (go back to “Get the Data”).
-
 10. Document what you have learned.
 
 ### 4. Prepare the data
+
+Notes:
+
+- Work on copies of the data (keep the original dataset intact).
+- Write functions for all data transformations you apply, for five reasons:
+  - So you can easily prepare the data the next time you get a fresh dataset
+  - So you can apply these transformations in future projects
+  - To clean and prepare the test set
+  - To clean and prepare new data instances once your solution is live
+  - To make it easy to treat your preparation choices as hyperparameters
+- Data cleaning:
+  - Fix or remove outliers (optional).
+  - Fill in missing values (e.g., with zero, mean, median…) or drop their rows (or columns).
+- Feature selection (optional):
+  - Drop the attributes that provide no useful information for the task.
+- Feature engineering, where appropriate:
+  - Discretize continuous features.
+  - Decompose features (e.g., categorical, date/time, etc.).
+  - Add promising transformations of features (e.g., log(x), sqrt(x), x2, etc.).
+  - Aggregate features into promising new features.
+- Feature scaling:
+  - Standardize or normalize features.
+
+### 5. Shortlist Promising Models
+
+Notes:
+
+- If the data is huge, you may want to sample smaller training sets so you can train many different models in a reasonable time (be aware that this penalizes complex models such as large neural nets or Random Forests).
+- Once again, try to automate these steps as much as possible.
+- 
+1. Train many quick-and-dirty models from different categories (e.g., linear, naive Bayes, SVM, Random Forest, neural net, etc.) using standard parameters.
+2. Measure and compare their performance.
+   
+- For each model, use N-fold cross-validation and compute the mean and standard deviation of the performance measure on the N folds.
+3. Analyze the most significant variables for each algorithm.
+4. Analyze the types of errors the models make.
+- What data would a human have used to avoid these errors?
+5. Perform a quick round of feature selection and engineering.
+6. Perform one or two more quick iterations of the five previous steps.
+7. Shortlist the top three to five most promising models, preferring models that make different types of errors.
+
+### 6. Fine-Tune the System
+Fine-Tune the System
+Notes:
+
+You will want to use as much data as possible for this step, especially as you move toward the end of fine-tuning.
+
+As always, automate what you can.
+
+Fine-tune the hyperparameters using cross-validation:
+
+    Treat your data transformation choices as hyperparameters, especially when you are not sure about them (e.g., if you’re not sure whether to replace missing values with zeros or with the median value, or to just drop the rows).
+
+    Unless there are very few hyperparameter values to explore, prefer random search over grid search. If training is very long, you may prefer a Bayesian optimization approach (e.g., using Gaussian process priors, as described by Jasper Snoek et al.).1
+
+Try Ensemble methods. Combining your best models will often produce better performance than running them individually.
+
+Once you are confident about your final model, measure its performance on the test set to estimate the generalization error.
+
+### 7. Present your solution
+
+Document what you have done.
+
+Create a nice presentation.
+
+    Make sure you highlight the big picture first.
+
+Explain why your solution achieves the business objective.
+
+Don’t forget to present interesting points you noticed along the way.
+
+    Describe what worked and what did not.
+
+    List your assumptions and your system’s limitations.
+
+Ensure your key findings are communicated through beautiful visualizations or easy-to-remember statements (e.g., “the median income is the number-one predictor of housing prices”).
+
+### Launch
+
+Launch!
+Get your solution ready for production (plug into production data inputs, write unit tests, etc.).
+
+Write monitoring code to check your system’s live performance at regular intervals and trigger alerts when it drops.
+
+    Beware of slow degradation: models tend to “rot” as data evolves.
+
+    Measuring performance may require a human pipeline (e.g., via a crowdsourcing service).
+
+    Also monitor your inputs’ quality (e.g., a malfunctioning sensor sending random values, or another team’s output becoming stale). This is particularly important for online learning systems.
+
+Retrain your models on a regular basis on fresh data (automate as much as possible).
